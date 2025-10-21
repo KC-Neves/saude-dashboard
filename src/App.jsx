@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./Components/Sidebar";
 import Card from "./Components/Card";
-import GraficoExemplo from "./components/GraficoExemplo";
+import GraficoExemplo from "./Components/GraficoExemplo";
 import FiltroPacientes from "./Components/FiltroPacientes";
 import ListaPacientes from "./Components/ListaPacientes";
 import pacientesData from "./data/pacientes";
