@@ -1,19 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./Components/Sidebar";
 import Card from "./Components/Card";
 import GraficoExemplo from "./Components/GraficoExemplo";
 import FiltroPacientes from "./Components/FiltroPacientes";
 import ListaPacientes from "./Components/ListaPacientes";
-import pacientesData from "./data/pacientes";
+import Login from "./pages/Login";
+import { buscarPacientes } from "./data/pacientes";
 
 function App() {
-  const [filtro, setFiltro] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
+  // 🔄 Limpa tokens antigos (força novo login)
+useEffect(() => {
+  localStorage.removeItem("token");
+}, []);
 
-  // Filtra os pacientes com base no nome digitado
-  const pacientesFiltrados = pacientesData.filter((p) =>
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [darkMode, setDarkMode] = useState(false); // modo escuro
+  const [pacientes, setPacientes] = useState([]);  // dados da API
+  const [filtro, setFiltro] = useState("");        // filtro de pacientes
+
+  // Buscar pacientes da API quando o token estiver disponível
+  useEffect(() => {
+    if (token) {
+      buscarPacientes().then((data) => setPacientes(data));
+    }
+  }, [token]);
+
+  // Filtra pacientes pelo nome digitado
+  const pacientesFiltrados = pacientes.filter((p) =>
     p.nome.toLowerCase().includes(filtro.toLowerCase())
   );
+
+  // Se não estiver logado, mostra a tela de login
+  if (!token) {
+    return <Login onLogin={setToken} />;
+  }
 
   return (
     <div
@@ -38,7 +58,7 @@ function App() {
         <div className="flex flex-col sm:flex-row gap-6 mb-8 flex-wrap">
           <Card
             title="Pacientes Hoje"
-            value={pacientesData.length}
+            value={pacientes.length}
             color="bg-gradient-to-r from-blue-400 to-blue-600"
           />
           <Card
@@ -69,3 +89,4 @@ function App() {
 }
 
 export default App;
+
